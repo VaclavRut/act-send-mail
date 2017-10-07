@@ -29,7 +29,7 @@ if (!input) {
 if (input.data) {
     input = Object.assign(input, JSON.parse(input.data));
     delete input.data;
-}else{
+}else if(input){
     input = JSON.parse(input);
 }
 
