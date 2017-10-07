@@ -29,15 +29,13 @@ Apify act to send mail.
 
 ```javascript
 Apify.call({
-    actId: 'apify/send-mail',
-    input: {
-        contentType: 'application/json',
-        body: JSON.stringify({
-            to: 'test@apifier.com',
-            subject: 'Test from act',
-            text: "Email text"
-        })
-    }
+    'apify/send-mail',
+    JSON.stringify({
+        to: 'test@apifier.com',
+        subject: 'Test from act',
+        text: "Email text"
+    }),
+    {}
 });
 ```
 

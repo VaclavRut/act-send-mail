@@ -22,34 +22,37 @@ const MAIL_ATTRIBUTES = ['to', 'subject', 'text', 'cc', 'bcc'];
 Apify.main(async () => {
     // Gets input of your act
     let input = await Apify.getValue('INPUT');
-    if (!input) {
-        throw new Error('Input is missing!');
-    }
-    // Data from crawler finish webhook was in input.data JSON string
-    if (input.data) {
-        input = Object.assign(input, JSON.parse(input.data));
-        delete input.data;
-    }
-    // Checks input
-    if (!typeCheck(INPUT_TYPES, input)) {
-        console.log(`Invalid input:\n${JSON.stringify(input)}\nData types:\n${INPUT_TYPES}\nAct failed!`);
-        throw new Error('Invalid input data');
-    }
-    // Sends mail
-    const mail = _.pick(input, MAIL_ATTRIBUTES);
-    mail.from = 'Apifier Mailer <postmaster@apify-mailer.com>';
+if (!input) {
+    throw new Error('Input is missing!');
+}
+// Data from crawler finish webhook was in input.data JSON string
+if (input.data) {
+    input = Object.assign(input, JSON.parse(input.data));
+    delete input.data;
+}else{
+    input = JSON.parse(input);
+}
 
-    if (input.isMock) {
-        console.log(`Mail:\n${JSON.stringify(mail)}`)
-    } else {
-        const sender = mailgun({
-            apiKey: process.env.MAILGUN_API_KEY,
-            domain: process.env.MAILGUN_DOMAIN
-        });
-        const senderBody = await sender.messages().send(mail);
-        console.log(`Email with id ${senderBody.id} was send to ${mail.to}.`);
-    }
-    // Sleeps act for 10s
-    // NOTE: We use sleep to avoid instant usage
-    sleep.sleep(10);
+// Checks input
+if (!typeCheck(INPUT_TYPES, input)) {
+    console.log(`Invalid input:\n${JSON.stringify(input)}\nData types:\n${INPUT_TYPES}\nAct failed!`);
+    throw new Error('Invalid input data');
+}
+// Sends mail
+const mail = _.pick(input, MAIL_ATTRIBUTES);
+mail.from = 'Apifier Mailer <postmaster@apify-mailer.com>';
+
+if (input.isMock) {
+    console.log(`Mail:\n${JSON.stringify(mail)}`)
+} else {
+    const sender = mailgun({
+        apiKey: process.env.MAILGUN_API_KEY,
+        domain: process.env.MAILGUN_DOMAIN
+    });
+    const senderBody = await sender.messages().send(mail);
+    console.log(`Email with id ${senderBody.id} was send to ${mail.to}.`);
+}
+// Sleeps act for 10s
+// NOTE: We use sleep to avoid instant usage
+sleep.sleep(10);
 });
